@@ -13,25 +13,32 @@ import MailIcon from '@mui/icons-material/Mail';
 import { AppContext } from '../store/context';
 
 export default function SideBar({ drawer, handleDrawer }) {
-  //   const [drawer, setDrawer] = React.useState(false);
-//   const { drawer, setDrawer } = React.useContext(AppContext);
+  const [addressList, setAddressList] = React.useState([
+    { address: '1234567890', name: 'wallet 1' },
+    { address: '1234567890', name: 'wallet 2' },
+  ]);
+  //   const { drawer, setDrawer } = React.useContext(AppContext);
   console.log('from sideBar', drawer);
+
+  const showText = (text) => {
+    const newText = Object.keys(text)[0];
+    return newText;
+  };
 
   const list = () => (
     <Box
       sx={{ width: 250 }}
       role='presentation'
       onClick={() => handleDrawer(!drawer)}
-      onKeyDown={()=>handleDrawer(false)}
+      onKeyDown={() => handleDrawer(false)}
     >
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
+        {addressList.map((item, index) => (
+          <ListItem key={index} disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                <ListItemText primary={`${item.name}(${item.address})`} />
               </ListItemIcon>
-              <ListItemText primary={text} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -40,9 +47,14 @@ export default function SideBar({ drawer, handleDrawer }) {
   );
 
   return (
-    <div>
+    <div style={{ width: '360px' }}>
       <React.Fragment>
-        <Drawer anchor='left' open={drawer} onClose={()=>handleDrawer(false)}>
+        <Drawer
+          sx={{ width: '260px' }}
+          anchor='left'
+          open={drawer}
+          onClose={() => handleDrawer(false)}
+        >
           {list()}
         </Drawer>
       </React.Fragment>

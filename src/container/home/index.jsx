@@ -7,7 +7,7 @@ import {
   Transaction,
   sendAndConfirmTransaction,
 } from '@solana/web3.js';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 // import * as bip39 from 'bip39';
 
@@ -16,6 +16,9 @@ import nacl from 'tweetnacl';
 import { decodeUTF8 } from 'tweetnacl-util';
 // for buffer erro in transaction
 import { Buffer } from 'buffer';
+import LandingPage from '../landingPage';
+import ItemCard from '../../components/itemCard';
+import BasicTabs from './home';
 // for nft balance
 // import { Metaplex, keypairIdentity } from '@metaplex-foundation/js';
 window.Buffer = Buffer;
@@ -135,6 +138,10 @@ export default function Home() {
   //     console.log(allNFTs);
   //   };
 
+  useEffect(() => {
+    console.log('my sollet', window.solana);
+  }, []);
+
   return (
     <div className='App'>
       <h3>This is the wallet:- {wallet?.publicKey.toBase58()} </h3>
@@ -146,6 +153,7 @@ export default function Home() {
       <button onClick={() => signMessage(wallet.secretKey)}>Sign</button>
       <button onClick={sendSol}>SendSol</button>
       <button>NftBalance</button>
+      <BasicTabs />
     </div>
   );
 }
