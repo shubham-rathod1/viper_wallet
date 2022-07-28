@@ -34,6 +34,7 @@ export default function Home() {
   const createWallet = async () => {
     let keypair = Keypair.generate();
     setWallet(keypair);
+    console.log(keypair);
   };
 
   // convert SecretKey to bs58 from Uint8Array
@@ -144,7 +145,7 @@ export default function Home() {
 
   return (
     <div className='App'>
-      <h3>This is the wallet:- {wallet?.publicKey.toBase58()} </h3>
+      {/* <h3>This is the wallet:- {wallet?.publicKey.toBase58()} </h3>
 
       <button onClick={createWallet}>Create wallet</button>
       <button onClick={verifyKeypair}>Test</button>
@@ -152,7 +153,7 @@ export default function Home() {
       <button onClick={keyFromMnemonics}>Mnemonic</button>
       <button onClick={() => signMessage(wallet.secretKey)}>Sign</button>
       <button onClick={sendSol}>SendSol</button>
-      <button>NftBalance</button>
+      <button>NftBalance</button> */}
       <BasicTabs />
     </div>
   );

@@ -26,4 +26,9 @@ export const openRoutes = [
     exact: false,
     element: lazy(() => import('../container/settings')),
   },
+  {
+    path: '/wallet',
+    exact: false,
+    element: lazy(() => import('../components/walletMenu')),
+  },
 ];

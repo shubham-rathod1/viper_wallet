@@ -13,11 +13,21 @@ const cards = [
 export default function LandingPage() {
   return (
     <div>
-      <Flex justify='center' align='center' padding='20px'>
+      <div
+        style={{
+          width: '20px',
+          height: '5px',
+          border: '1px solid gray',
+          margin: '30px auto',
+          borderRadius: '2px',
+          backgroundColor: 'gray',
+        }}
+      ></div>
+      <Flex justify='center' align='center' padding='20px 11px'>
         {['Deposit', 'Send'].map((item, i) => (
           <Button
             key={i}
-            background='red'
+            background='#333333'
             border='none'
             margin='10px 5px'
             radius='7px'

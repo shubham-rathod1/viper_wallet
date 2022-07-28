@@ -22,7 +22,7 @@ export default function Header() {
     <Box sx={{ flexGrow: 1, width: '360px' }}>
       <AppBar
         position='static'
-        sx={{ height: '40px', display: 'flex', justifyContent: 'center' }}
+        sx={{ height: '40px',backgroundColor: 'rgb(34,34,34)', display: 'flex', justifyContent: 'center' }}
       >
         <Stack direction="row" justifyContent="center" alignItems="center" padding=" 0 10px" >
           <IconButton

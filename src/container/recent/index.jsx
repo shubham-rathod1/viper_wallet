@@ -1,5 +1,6 @@
 import React from 'react';
 import ItemCard from '../../components/itemCard';
+import { Flex } from '../../shared/sharedStyles';
 
 const cards = [
   {
@@ -24,13 +25,13 @@ const cards = [
 
 export default function Recent() {
   return (
-    <div>
+    <Flex direction="column">
       <h2 style={{ margin: '15px 0', padding: '0px', textAlign: 'center' }}>
         Recent Activity
       </h2>
       {cards.map((item) => (
         <ItemCard item={item} />
       ))}
-    </div>
+    </Flex>
   );
 }

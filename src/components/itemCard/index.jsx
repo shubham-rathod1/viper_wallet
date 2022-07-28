@@ -14,25 +14,27 @@ const Para = styled.p`
   margin: 0px;
   padding: 2px 0;
   text-align: left;
+  color: ${(props) => props.color || null};
   font-weight: ${(props) => props.weight || null};
 `;
 
-export default function ItemCard({ item }) {
-  console.log(item.image);
+export default function ItemCard({ item, width }) {
   return (
     <div>
       <Flex
+        backgroundColor='#333333'
         direction='row'
         align='center'
         padding='10px'
-        border='1px solid red'
         radius='7px'
-        margin='10px'
+        margin='10px 0'
       >
         <Img image={`url(${item.image})`} />
         <Flex direction='column' margin='0px 10px' wrap='wrap' justify='center'>
-          <Para weight="bold" >{item.title}</Para>
-          <Para>{`${item.value}`}</Para>
+          <Para weight='bold' color='white'>
+            {item.title}
+          </Para>
+          <Para color='#6b6a6a'>{`${item.value}`}</Para>
         </Flex>
       </Flex>
     </div>

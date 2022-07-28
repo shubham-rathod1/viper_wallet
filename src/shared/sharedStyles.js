@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const Flex = styled.div`
   display: flex;
+  visibility: ${(props) => props.visibility || null};
   flex-direction: ${(props) => props.direction || 'row'};
   flex-wrap: ${(props) => props.wrap || null};
   justify-content: ${(props) => props.justify || null};
@@ -13,6 +14,15 @@ export const Flex = styled.div`
   border: ${(props) => props.border || null};
   border-radius: ${(props) => props.radius || null};
   flex-basis: ${(props) => props.basis || null};
+  border-bottom: ${(props) => props.b_bottom || null};
+  border-top: ${(props) => props.b_top || null};
+  background-color: ${(props) => props.backgroundColor || null};
+  overflow-y: ${(props) => props.overflow || null};
+  overflow-x: hidden;
+  &:hover {
+    cursor: ${(props) => props.cursor || null};
+    background: ${(props) => props.hoverColor || null};
+  }
 `;
 
 export const Button = styled.button`

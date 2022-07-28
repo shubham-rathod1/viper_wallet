@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import SettingsItem from '../../components/settingItems';
 import { Button, Flex, Input } from '../../shared/sharedStyles';
 import { BsPencilFill } from 'react-icons/bs';
+import { InputAdornment, TextField } from '@mui/material';
+import { AppContext } from '../../store/context';
+import { ellipsify } from '../../helper/helper';
 
 const cards = [
   {
@@ -25,40 +28,51 @@ const buttons = [
 ];
 
 export default function Settings() {
-  const handleChange = () => {};
-  const value = 'wallet 1';
+  const { wallets, setWallets } = useContext(AppContext);
+  const [val, setVal] = useState('');
+  const [walletTitle, setWalletTitle] = useState('');
+  const changeName = () => {
+    const data = wallets?.map((item, i) =>
+      item.active ? (item = { ...item, title: val }) : item
+    );
+    setWallets(data);
+  };
+
+  useEffect(() => {
+    if (wallets.length > 0) {
+      const data = wallets.filter((item, i) => item.active);
+      setWalletTitle(data[0].title);
+      console.log('my wallet', data[0].title);
+    } else {
+      setWalletTitle('account');
+    }
+  }, [wallets]);
+
   return (
     <>
       <Flex direction='column' align='center'>
         <Flex
           direction='row'
           justify='space-between'
-          border='1px solid red'
           radius='5px'
-          width='50%'
           margin='30px 0 0px 0'
           align='center'
         >
-          <Input
-            width='80%'
-            padding='10px'
-            radius='5px'
-            border='none'
-            type='text'
-            value={value}
-            onChange={handleChange}
-            margin='5px 0'
+          <TextField
+            sx={{ outline: 'none', width: '230px' }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <BsPencilFill fontSize='20px' color='#333333' />
+                </InputAdornment>
+              ),
+            }}
+            value={val}
+            onChange={(e) => setVal(e.target.value)}
+            onBlur={changeName}
           />
-          <Button
-            background='transparent'
-            width='30px'
-            height='30px'
-            margin='7px'
-          >
-            <BsPencilFill fontSize='17px' />
-          </Button>
         </Flex>
-        <p>(addr...ess)</p>
+        <p style={{ color: 'white' }}>{ellipsify(walletTitle)}</p>
       </Flex>
       {cards.map((item, i) => (
         <SettingsItem key={i} item={item} />
