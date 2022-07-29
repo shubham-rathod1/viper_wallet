@@ -4,6 +4,7 @@ import { Button, Flex } from '../../shared/sharedStyles';
 // web3 imports
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { AppContext } from '../../store/context';
+import { useNavigate } from 'react-router-dom';
 
 const cards = [
   {
@@ -16,11 +17,13 @@ const cards = [
 export default function LandingPage() {
   const { wallets, connection, currentBalance, setCurrentBalance } =
     useContext(AppContext);
-  console.log(connection);
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (wallets.length > 0) {
       const pair = wallets.filter((wallet, i) => wallet.active)[0].keypair
-        .publicKey;
+        .publicKey.toString();
       (async () => {
         let wallet = new PublicKey(pair);
         const balance =
@@ -29,6 +32,14 @@ export default function LandingPage() {
       })();
     }
   }, [wallets]);
+
+  const handleDeposit = () => {
+    navigate('/deposit', { replace: true });
+  };
+
+  const handleSend = () => {
+    navigate('/send', { replace: true });
+  };
 
   return (
     <div>
@@ -55,7 +66,9 @@ export default function LandingPage() {
             width='150px'
             weight='bold'
             hoverColor='#444444'
-            onClick={() => console.log({ item })}
+            onClick={
+              item === 'Deposit' ? () => handleDeposit() : () => handleSend()
+            }
           >
             {item}
           </Button>
@@ -66,7 +79,7 @@ export default function LandingPage() {
           title: 'Solana',
           image:
             'https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png',
-          value: wallets.length > 0 ? `${currentBalance} SOL` : "no account",
+          value: wallets.length > 0 ? `${currentBalance} SOL` : 'No account',
         },
       ].map((item, i) => (
         <ItemCard key={i} item={item} />

@@ -1,160 +1,156 @@
-import {
-  Keypair,
-  PublicKey,
-  Connection,
-  SystemProgram,
-  LAMPORTS_PER_SOL,
-  Transaction,
-  sendAndConfirmTransaction,
-} from '@solana/web3.js';
-import { useEffect, useState } from 'react';
-import './App.css';
-// import * as bip39 from 'bip39';
-
-// sign message with secret key
-import nacl from 'tweetnacl';
-import { decodeUTF8 } from 'tweetnacl-util';
-// for buffer erro in transaction
-import { Buffer } from 'buffer';
+import * as React from 'react';
+import PropTypes from 'prop-types';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import LandingPage from '../landingPage';
-import ItemCard from '../../components/itemCard';
-import BasicTabs from './home';
-// for nft balance
-// import { Metaplex, keypairIdentity } from '@metaplex-foundation/js';
-window.Buffer = Buffer;
+import { AiFillDollarCircle } from 'react-icons/ai';
+import { BsGearFill } from 'react-icons/bs';
+import { GoZap } from 'react-icons/go';
+import { IoSwapHorizontalSharp } from 'react-icons/io5';
+import { TiThMenuOutline } from 'react-icons/ti';
+import Recent from '../recent';
+import { Flex } from '../../shared/sharedStyles';
+import Settings from '../settings';
 
-// to convert to base58
-const bs58 = require('bs58');
-
-export default function Home() {
-  const [wallet, setWallet] = useState(null);
-
-  // creating wallet instance
-
-  const createWallet = async () => {
-    let keypair = Keypair.generate();
-    setWallet(keypair);
-    console.log(keypair);
-  };
-
-  // convert SecretKey to bs58 from Uint8Array
-  const consvertSecret = () => {
-    const bytes = Uint8Array.from(wallet.secretKey);
-    console.log(bs58.encode(bytes));
-    return bs58.encode(bytes);
-  };
-  //verify if keypair from secret key is right or not;
-  const verifyKeypair = async () => {
-    const publicKey = new PublicKey(wallet.publicKey.toString());
-    const keypair = Keypair.fromSecretKey(Uint8Array.from(wallet.secretKey));
-    console.log(keypair.publicKey.toBase58() === publicKey.toBase58());
-    // true
-  };
-
-  // webpack is breaking because of bip39 package, fix it later
-
-  // const mnemonic = bip39.generateMnemonic();
-  const keyFromMnemonics = (mnemonic, password) => {
-    // const seed = bip39.mnemonicToSeedSync(mnemonic, password); // (mnemonic, password)
-    // const keypair = Keypair.fromSeed(seed.slice(0, 32));
-    // console.log(`${keypair.publicKey.toBase58()}`); // 5ZWj7a1f8tWkjBESHKgrLmXshuXxqeY9SYcfbshpAqPG
-  };
-
-  const signMessage = async (secretKey) => {
-    const keypair = Keypair.fromSecretKey(Uint8Array.from(secretKey));
-
-    const message = 'The quick brown fox jumps over the lazy dog';
-    const messageBytes = decodeUTF8(message);
-
-    const signature = nacl.sign.detached(messageBytes, keypair.secretKey);
-    const result = nacl.sign.detached.verify(
-      messageBytes,
-      signature,
-      keypair.publicKey.toBytes()
-    );
-
-    console.log(result);
-    // true
-  };
-
-  const sendSol = async () => {
-    const fromKeypair = Keypair.generate();
-    const toKeypair = Keypair.generate();
-
-    const connection = new Connection(
-      'https://api.devnet.solana.com',
-      'confirmed'
-    );
-    console.log('This is connection', connection);
-
-    const airdropSignature = await connection.requestAirdrop(
-      fromKeypair.publicKey,
-      LAMPORTS_PER_SOL
-    );
-    console.log('airdropSignature', airdropSignature);
-
-    await connection.confirmTransaction(airdropSignature);
-
-    const beforeBalance = await connection.getBalance(fromKeypair.publicKey);
-    console.log('Before balance', beforeBalance.toString());
-
-    // confirming that the airdrop went through
-    const latestBlockHash = await connection.getLatestBlockhash();
-    console.log(latestBlockHash);
-
-    const lamportsToSend = 1000000;
-
-    const transferTransaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: fromKeypair.publicKey,
-        toPubkey: toKeypair.publicKey,
-        lamports: lamportsToSend,
-      })
-    );
-    console.log('transferTransaction', transferTransaction);
-
-    await sendAndConfirmTransaction(connection, transferTransaction, [
-      fromKeypair,
-    ]);
-    console.log(
-      'afterBalance',
-      (await connection.getBalance(toKeypair.publicKey)) / LAMPORTS_PER_SOL
-    );
-    console.log("it's done");
-  };
-
-  //   const getNftBalance = async () => {
-  //     const connection = new Connection(
-  //       'https://api.devnet.solana.com',
-  //       'confirmed'
-  //     );
-  //     const keypair = Keypair.generate();
-
-  //     const metaplex = new Metaplex(connection);
-  //     metaplex.use(keypairIdentity(keypair));
-
-  //     const owner = new PublicKey('2R4bHmSBHkHAskerTHE6GE1Fxbn31kaD5gHqpsPySVd7');
-  //     const allNFTs = await metaplex.nfts().findAllByOwner(owner);
-
-  //     console.log(allNFTs);
-  //   };
-
-  useEffect(() => {
-    console.log('my sollet', window.solana);
-  }, []);
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
 
   return (
-    <div className='App'>
-      {/* <h3>This is the wallet:- {wallet?.publicKey.toBase58()} </h3>
-
-      <button onClick={createWallet}>Create wallet</button>
-      <button onClick={verifyKeypair}>Test</button>
-      <button onClick={consvertSecret}>Get secretKey</button>
-      <button onClick={keyFromMnemonics}>Mnemonic</button>
-      <button onClick={() => signMessage(wallet.secretKey)}>Sign</button>
-      <button onClick={sendSol}>SendSol</button>
-      <button>NftBalance</button> */}
-      <BasicTabs />
+    <div
+      role='tabpanel'
+      style={{width: '100%'}}
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
     </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
+export default function BasicTabs() {
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  return (
+    <>
+      <Box sx={{ backgroundColor: '#262626' }}>
+        <Flex height='420px' width='100%' justify='center' overflow="scroll">
+          <TabPanel value={value} index={0}>
+            <LandingPage />
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            Item Two
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+           Item Three
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+          <Recent />
+          </TabPanel>
+          <TabPanel value={value} index={4}>
+            <Settings />
+          </TabPanel>
+        </Flex>
+        <Box
+          sx={{
+            borderTop: 1,
+            borderColor: 'divider',
+            overflow: 'hidden',
+            backgroundColor: '#333333',
+          }}
+        >
+          <Tabs
+            TabIndicatorProps={{
+              sx: { top: 0 },
+            }}
+            overflow='hidden'
+            value={value}
+            onChange={handleChange}
+            aria-label='basic tabs example'
+            justifyContent='space-evenly'
+          >
+            <Tab
+              disableRipple={true}
+              sx={{ minWidth: '72px' }}
+              icon={
+                <AiFillDollarCircle
+                  color={value === 0 ? 'white' : '#666666'}
+                  fontSize='30px'
+                />
+              }
+              {...a11yProps(0)}
+            />
+            <Tab
+              disableRipple={true}
+              sx={{ minWidth: '72px' }}
+              icon={
+                <TiThMenuOutline
+                  color={value === 1 ? 'white' : '#666666'}
+                  fontSize='30px'
+                />
+              }
+              {...a11yProps(1)}
+            />
+            <Tab
+              disableRipple={true}
+              sx={{ minWidth: '72px' }}
+              icon={
+                <IoSwapHorizontalSharp
+                  color={value === 2 ? 'white' : '#666666'}
+                  fontSize='30px'
+                />
+              }
+              {...a11yProps(2)}
+            />
+            <Tab
+              disableRipple={true}
+              sx={{ minWidth: '72px' }}
+              icon={
+                <GoZap
+                  color={value === 3 ? 'white' : '#666666'}
+                  fontSize='30px'
+                />
+              }
+              {...a11yProps(3)}
+            />
+            <Tab
+              disableRipple={true}
+              sx={{ minWidth: '72px' }}
+              icon={
+                <BsGearFill
+                  color={value === 4 ? 'white' : '#666666'}
+                  fontSize='30px'
+                />
+              }
+              {...a11yProps(4)}
+            />
+          </Tabs>
+        </Box>
+      </Box>
+    </>
   );
 }

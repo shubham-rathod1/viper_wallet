@@ -19,6 +19,8 @@ export const Flex = styled.div`
   background-color: ${(props) => props.backgroundColor || null};
   overflow-y: ${(props) => props.overflow || null};
   overflow-x: hidden;
+  min-height: ${(props) => props.minHeight || null};
+  max-height: ${(props) => props.maxHeight || null};
   &:hover {
     cursor: ${(props) => props.cursor || null};
     background: ${(props) => props.hoverColor || null};

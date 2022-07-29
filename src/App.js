@@ -3,9 +3,10 @@ import Header from './core/header';
 import OpenRoutes from './routes';
 import { Connection } from '@solana/web3.js';
 import { AppContext } from './store/context';
+import { loadData } from './store/localStorage';
 
 function App() {
-  const { setConnection } = useContext(AppContext);
+  const { setConnection, setWallets } = useContext(AppContext);
 
   const defaultNetwork = () => {
     const connect = new Connection(
@@ -17,10 +18,13 @@ function App() {
 
   useEffect(() => {
     defaultNetwork();
+    if (loadData('accounts') !== null) {
+      setWallets(loadData('accounts'));
+    }
   }, []);
   return (
     <>
-      <div>
+      <div style={{height:"500px"}}>
         <Header />
         <OpenRoutes />
       </div>

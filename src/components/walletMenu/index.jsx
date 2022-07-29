@@ -5,6 +5,8 @@ import { Button, Flex } from '../../shared/sharedStyles';
 import { Keypair } from '@solana/web3.js';
 import { AppContext } from '../../store/context';
 import { useNavigate } from 'react-router-dom';
+import { saveData } from '../../store/localStorage';
+var CryptoJS = require('crypto-js');
 
 const Para = styled.p`
   margin: 0px;
@@ -34,10 +36,16 @@ export default function WalletMenu() {
   const createWallet = async () => {
     let count = wallets.length;
     let keypair = Keypair.generate();
-    const publicKey = keypair.publicKey.toString();
+    const PublicKey = keypair.publicKey.toString();
+    console.log(keypair.secretKey);
+    const encrypt = CryptoJS.AES.encrypt(
+      JSON.stringify(keypair.secretKey),
+      'secret'
+    ).toString();
+
     let pairs = {
-      publicKey: publicKey,
-      secretKey: keypair.secretKey,
+      publicKey: PublicKey,
+      secretKey: encrypt,
     };
     const newData = wallets?.map(
       (wallet) => (wallet = { ...wallet, active: false })
@@ -47,6 +55,9 @@ export default function WalletMenu() {
       title: `Wallet ${count + 1}`,
       active: true,
     };
+
+    console.log('from create', payload);
+    saveData('accounts', [...newData, payload]);
     setWallets([...newData, payload]);
   };
   console.log('wallets', wallets);

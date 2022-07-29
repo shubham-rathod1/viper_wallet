@@ -6,6 +6,7 @@ import { InputAdornment, TextField } from '@mui/material';
 import { AppContext } from '../../store/context';
 import { ellipsify } from '../../helper/helper';
 import { useNavigate } from 'react-router-dom';
+import { saveData } from '../../store/localStorage';
 
 const cards = [
   {
@@ -37,6 +38,7 @@ export default function Settings() {
     const data = wallets?.map((item, i) =>
       item.active ? (item = { ...item, title: val }) : item
     );
+    saveData("accounts",data);
     setWallets(data);
   };
 

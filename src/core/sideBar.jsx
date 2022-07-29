@@ -11,9 +11,12 @@ import { FiPlus } from 'react-icons/fi';
 import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { ellipsify } from '../helper/helper';
+import { saveData } from '../store/localStorage';
 
 export default function SideBar({ drawer, handleDrawer }) {
   const { wallets, setWallets } = React.useContext(AppContext);
+
+  console.log('side wala', wallets);
 
   const createWallet = () => {
     console.log('createWallet');
@@ -26,6 +29,8 @@ export default function SideBar({ drawer, handleDrawer }) {
     const newData = wallets?.map((item, index) =>
       index === i ? { ...item, active: true } : { ...item, active: false }
     );
+    // console.log("from sidebar",newData);
+    saveData('accounts', newData);
     setWallets(newData);
   };
 
@@ -58,31 +63,37 @@ export default function SideBar({ drawer, handleDrawer }) {
       >
         <List>
           {/* here need to change address on every onClick */}
-          {wallets.length > 0 ? wallets.map((item, index) => (
-            <Flex
-              key={index}
-              justify='space-between'
-              padding='10px 0'
-              cursor='pointer'
-              onClick={() => selectWallet(index)}
-            >
-              <Typography
-                textOverflow='ellipsis'
-                overflow='hidden'
-                whiteSpace='nowrap'
-                color='white'
-              >{`${item.title} (${ellipsify(
-                item.keypair.publicKey
-              )})`}</Typography>
+          {wallets.length > 0 ? (
+            wallets.map((item, index) => (
               <Flex
-                visibility={!item.active && 'hidden'}
-                padding='0px 10px'
-                align='center'
+                key={index}
+                justify='space-between'
+                padding='10px 0'
+                cursor='pointer'
+                onClick={() => selectWallet(index)}
               >
-                <BiCheck color='white' fontSize='23px' />
+                <Typography
+                  textOverflow='ellipsis'
+                  overflow='hidden'
+                  whiteSpace='nowrap'
+                  color='white'
+                >
+                  {`${item.title} (${ellipsify(
+                    item.keypair.publicKey.toString()
+                  )})`}
+                </Typography>
+                <Flex
+                  visibility={!item.active ? 'hidden' : undefined}
+                  padding='0px 10px'
+                  align='center'
+                >
+                  <BiCheck color='white' fontSize='23px' />
+                </Flex>
               </Flex>
-            </Flex>
-          )) : <p style={{color: 'white'}}>Please Add Account</p>}
+            ))
+          ) : (
+            <p style={{ color: 'white' }}>Please Add Account</p>
+          )}
         </List>
       </Box>
     </>
