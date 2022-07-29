@@ -18,7 +18,7 @@ const Para = styled.p`
   font-weight: ${(props) => props.weight || null};
 `;
 
-export default function ItemCard({ item, width }) {
+export default function ItemCard({ item }) {
   return (
     <div>
       <Flex

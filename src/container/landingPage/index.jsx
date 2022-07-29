@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import ItemCard from '../../components/itemCard';
 import { Button, Flex } from '../../shared/sharedStyles';
+// web3 imports
+import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { AppContext } from '../../store/context';
 
 const cards = [
   {
@@ -11,6 +14,22 @@ const cards = [
 ];
 
 export default function LandingPage() {
+  const { wallets, connection, currentBalance, setCurrentBalance } =
+    useContext(AppContext);
+  console.log(connection);
+  useEffect(() => {
+    if (wallets.length > 0) {
+      const pair = wallets.filter((wallet, i) => wallet.active)[0].keypair
+        .publicKey;
+      (async () => {
+        let wallet = new PublicKey(pair);
+        const balance =
+          (await connection.getBalance(wallet)) / LAMPORTS_PER_SOL;
+        setCurrentBalance(balance);
+      })();
+    }
+  }, [wallets]);
+
   return (
     <div>
       <div
@@ -23,7 +42,7 @@ export default function LandingPage() {
           backgroundColor: 'gray',
         }}
       ></div>
-      <Flex justify='center' align='center' padding='20px 11px'>
+      <Flex justify='center' align='center' padding='20px 5px'>
         {['Deposit', 'Send'].map((item, i) => (
           <Button
             key={i}
@@ -33,16 +52,23 @@ export default function LandingPage() {
             radius='7px'
             color='white'
             padding='10px'
-            width='135px'
+            width='150px'
             weight='bold'
-            hoverColor='green'
+            hoverColor='#444444'
             onClick={() => console.log({ item })}
           >
             {item}
           </Button>
         ))}
       </Flex>
-      {cards.map((item, i) => (
+      {[
+        {
+          title: 'Solana',
+          image:
+            'https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png',
+          value: wallets.length > 0 ? `${currentBalance} SOL` : "no account",
+        },
+      ].map((item, i) => (
         <ItemCard key={i} item={item} />
       ))}
     </div>

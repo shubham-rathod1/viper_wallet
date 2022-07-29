@@ -11,7 +11,8 @@ const Para = styled.p`
   font-weight: ${(props) => props.weight || null};
 `;
 
-export default function SettingsItem({ item }) {
+export default function SettingsItem({ item, handleClick, id }) {
+  console.log(id);
   return (
     <div>
       <Flex
@@ -22,12 +23,16 @@ export default function SettingsItem({ item }) {
         margin='10px 0'
         justify='space-between'
         backgroundColor='#333333'
+        cursor='pointer'
+        onClick={handleClick ? () => handleClick(id) : null}
       >
         <Flex direction='column' margin='0px 10px' wrap='wrap' justify='center'>
-          <Para color="white" weight='bold'>{item.title}</Para>
+          <Para color='white' weight='bold'>
+            {item.title}
+          </Para>
           <Para color='#6b6a6a'>{`${item.description}`}</Para>
         </Flex>
-        <IoIosArrowForward fontSize='20px' />
+        <IoIosArrowForward color='6b6a6a' fontSize='20px' />
       </Flex>
     </div>
   );

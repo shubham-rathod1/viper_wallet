@@ -6,10 +6,16 @@ export const AppContext = createContext();
 
 export default function AppContextPrivider({ children }) {
   const [wallets, setWallets] = useState([]);
+  const [connection, setConnection] = useState(null);
+  const [currentBalance, setCurrentBalance] = useState(null);
 
   const value = {
     wallets,
     setWallets,
+    setConnection,
+    connection,
+    setCurrentBalance,
+    currentBalance,
   };
 
   return (
