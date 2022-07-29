@@ -1,10 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Nav from '../../shared/nav';
 import { Button, Flex, Input } from '../../shared/sharedStyles';
 import { AppContext } from '../../store/context';
 import { BiDownArrowAlt } from 'react-icons/bi';
+import { estimateGas, sendTransaction } from '../../helper/helper';
+import { PublicKey } from '@solana/web3.js';
 
 const Img = styled.div`
   background-image: ${(props) => props.image || null};
@@ -15,10 +17,20 @@ const Img = styled.div`
   margin: 20px auto;
 `;
 
-export default function Confirm({ details, handleSend }) {
+export default function Confirm({ details }) {
   const { wallets, connection } = useContext(AppContext);
+  const [gas, setGas] = useState(null);
   const navigate = useNavigate();
-  console.log('details', details);
+
+  useEffect(() => {
+    (async () => {
+      const wallet = wallets.filter((item, i) => item.active);
+      const address = wallet[0].keypair.publicKey;
+      const from = new PublicKey(address);
+      const to = new PublicKey(details.to);
+      setGas(await estimateGas(connection, from, to, details.val));
+    })();
+  }, [wallets]);
   return (
     <div style={{ height: '475px', backgroundColor: '#262626' }}>
       <Nav text='Confirm Send' />
@@ -55,8 +67,8 @@ export default function Confirm({ details, handleSend }) {
                 margin: '0',
                 color: 'white',
                 textAlign: 'center',
-                wordBreak:"break-all",
-                padding: '0 25px'
+                wordBreak: 'break-all',
+                padding: '0 25px',
               }}
             >
               {details.to}
@@ -75,7 +87,7 @@ export default function Confirm({ details, handleSend }) {
             radius='5px'
           >
             <p style={{ color: 'white', padding: '0 6px' }}>Network Fee</p>
-            <p style={{ color: 'white', padding: '0 6px' }}>$0.00021</p>
+            <p style={{ color: 'white', padding: '0 6px' }}>{gas} LAM</p>
           </Flex>
           <Flex>
             <Button
@@ -88,7 +100,7 @@ export default function Confirm({ details, handleSend }) {
               width='158px'
               weight='bold'
               hoverColor='#444444'
-              onClick={() => navigate('/', { replace: true })}
+              onClick={() => navigate('/send', { replace: true })}
             >
               Cancel
             </Button>
@@ -102,7 +114,9 @@ export default function Confirm({ details, handleSend }) {
               width='158px'
               weight='bold'
               hoverColor='#444444'
-              //   onClick={handleSend}
+              onClick={() =>
+                sendTransaction(wallets, connection, details.val, details.to)
+              }
             >
               Send
             </Button>
