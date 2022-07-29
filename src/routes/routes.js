@@ -13,7 +13,7 @@ export const openRoutes = [
   },
   {
     path: '/send',
-    exact: false,
+    exact: true,
     element: lazy(() => import('../components/send')),
   },
   {
@@ -35,5 +35,10 @@ export const openRoutes = [
     path: '/network',
     exact: false,
     element: lazy(() => import('../components/network')),
+  },
+  {
+    path: '/confirm',
+    exact: false,
+    element: lazy(() => import('../components/send/confirm')),
   },
 ];

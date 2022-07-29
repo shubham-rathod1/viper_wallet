@@ -15,6 +15,8 @@ import {
   PublicKey,
   Keypair,
 } from '@solana/web3.js';
+import { useNavigate } from 'react-router-dom';
+import Confirm from './confirm';
 const web3 = require('@solana/web3.js');
 var CryptoJS = require('crypto-js');
 
@@ -34,21 +36,13 @@ const init = { val: '', to: '' };
 export default function Send() {
   const { wallets, connection } = useContext(AppContext);
   const [details, setDetails] = useState(init);
-  // const [val, setVal] = useState(0);
+  const [next, setNext] = useState(false);
 
-  console.log(wallets);
+  const navigate = useNavigate();
+
   const handleSend = async () => {
     const data = wallets.filter((ele) => ele.active)[0];
     const from = new PublicKey(data.keypair.publicKey);
-    // const pub = new PublicKey(from);
-    console.log('from', from);
-    // return;
-
-    // const connection = new Connection(
-    //   'https://api.devnet.solana.com',
-    //   'confirmed'
-    // );
-    // console.log('This is connection', connection);
 
     // const airdropSignature = await connection.requestAirdrop(
     //   fromKeypair.publicKey,
@@ -75,10 +69,6 @@ export default function Send() {
       })
     );
     console.log('transferTransaction', transferTransaction);
-    // let key = Keypair.generate();
-    // const ary = new Uint8Array(data.keypair.secretKey);
-
-    // console.log('secret', ary, key.secretKey);
 
     var bytes = CryptoJS.AES.decrypt(data.keypair.secretKey, 'secret');
     var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
@@ -87,7 +77,6 @@ export default function Send() {
     const sec = new Uint8Array(ary);
     console.log('my sec', sec);
 
-    // return;
     const kpair = Keypair.fromSecretKey(Uint8Array.from(sec));
     console.log('kpair', kpair);
     await sendAndConfirmTransaction(connection, transferTransaction, [kpair]);
@@ -107,8 +96,18 @@ export default function Send() {
     setDetails(payload);
   };
 
-  return (
-    <div style={{ height: '475px', backgroundColor: ('#262626') }}>
+  const handleNext = () => {
+    if (details.val !== '' && details.to !== '') {
+      setNext(true);
+    }
+    // create alert template
+    console.log('empty val');
+  };
+
+  return next ? (
+    <Confirm details={details} />
+  ) : (
+    <div style={{ height: '475px', backgroundColor: '#262626' }}>
       <Nav text='Send SOL' />
       <Flex direction='column' align='center'>
         <Img
@@ -193,6 +192,7 @@ export default function Send() {
               width='158px'
               weight='bold'
               hoverColor='#444444'
+              onClick={() => navigate('/', { replace: true })}
             >
               Cancel
             </Button>
@@ -206,7 +206,7 @@ export default function Send() {
               width='158px'
               weight='bold'
               hoverColor='#444444'
-              onClick={handleSend}
+              onClick={handleNext}
             >
               Next
             </Button>

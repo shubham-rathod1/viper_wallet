@@ -16,8 +16,6 @@ import { saveData } from '../store/localStorage';
 export default function SideBar({ drawer, handleDrawer }) {
   const { wallets, setWallets } = React.useContext(AppContext);
 
-  console.log('side wala', wallets);
-
   const createWallet = () => {
     console.log('createWallet');
 
@@ -29,7 +27,6 @@ export default function SideBar({ drawer, handleDrawer }) {
     const newData = wallets?.map((item, index) =>
       index === i ? { ...item, active: true } : { ...item, active: false }
     );
-    // console.log("from sidebar",newData);
     saveData('accounts', newData);
     setWallets(newData);
   };
@@ -62,7 +59,6 @@ export default function SideBar({ drawer, handleDrawer }) {
         padding='0 0 0 15px'
       >
         <List>
-          {/* here need to change address on every onClick */}
           {wallets.length > 0 ? (
             wallets.map((item, index) => (
               <Flex
