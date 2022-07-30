@@ -40,55 +40,6 @@ export default function Send() {
 
   const navigate = useNavigate();
 
-  const handleSend = async () => {
-    const data = wallets.filter((ele) => ele.active)[0];
-    const from = new PublicKey(data.keypair.publicKey);
-
-    // const airdropSignature = await connection.requestAirdrop(
-    //   fromKeypair.publicKey,
-    //   LAMPORTS_PER_SOL
-    // );
-    // console.log('airdropSignature', airdropSignature);
-
-    // await connection.confirmTransaction(airdropSignature);
-
-    const beforeBalance = await connection.getBalance(from);
-    console.log('Before balance', beforeBalance.toString());
-
-    // confirming that the airdrop went through
-    const latestBlockHash = await connection.getLatestBlockhash();
-    console.log(latestBlockHash);
-
-    const lamportsToSend = details.val * web3.LAMPORTS_PER_SOL;
-
-    const transferTransaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: from,
-        toPubkey: details.to,
-        lamports: lamportsToSend,
-      })
-    );
-    console.log('transferTransaction', transferTransaction);
-
-    var bytes = CryptoJS.AES.decrypt(data.keypair.secretKey, 'secret');
-    var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-    const ary = Object.values(decryptedData);
-    console.log('my ary', ary);
-    const sec = new Uint8Array(ary);
-    console.log('my sec', sec);
-
-    const kpair = Keypair.fromSecretKey(Uint8Array.from(sec));
-    console.log('kpair', kpair);
-    await sendAndConfirmTransaction(connection, transferTransaction, [kpair]);
-
-    console.log(
-      'afterBalance',
-      (await connection.getBalance(new PublicKey(details.to))) /
-        LAMPORTS_PER_SOL
-    );
-    console.log("it's done");
-  };
-
   const handleChange = (e) => {
     const name = e.target.name;
     let payload = { ...details, [name]: e.target.value };
@@ -99,9 +50,9 @@ export default function Send() {
   const handleNext = () => {
     if (details.val !== '' && details.to !== '') {
       setNext(true);
+    } else {
+      return 'empty fields';
     }
-    // create alert template
-    console.log('empty val');
   };
 
   return next ? (

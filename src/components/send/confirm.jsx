@@ -20,6 +20,8 @@ const Img = styled.div`
 export default function Confirm({ details }) {
   const { wallets, connection } = useContext(AppContext);
   const [gas, setGas] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [completed, setCompleted] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,98 +33,135 @@ export default function Confirm({ details }) {
       setGas(await estimateGas(connection, from, to, details.val));
     })();
   }, [wallets]);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    await sendTransaction(wallets, connection, details.val, details.to);
+    setLoading(false);
+    setCompleted(true);
+  };
+
   return (
     <div style={{ height: '475px', backgroundColor: '#262626' }}>
       <Nav text='Confirm Send' />
-      <Flex direction='column' align='center' justify='space-between'>
-        <Flex
-          direction='column'
-          align='center'
-          width='90%'
-          height='261px'
-          radius='7px'
-          backgroundColor='#333333'
-        >
-          <Img
-            image={`url('https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png')`}
-          />
-          <p
+      {!loading ? (
+        !completed ? (
+          <Flex direction='column' align='center' justify='space-between'>
+            <Flex
+              direction='column'
+              align='center'
+              width='90%'
+              height='261px'
+              radius='7px'
+              backgroundColor='#333333'
+            >
+              <Img
+                image={`url('https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png')`}
+              />
+              <p
+                style={{
+                  margin: '0',
+                  padding: '0',
+                  fontSize: '35px',
+                  color: 'white',
+                }}
+              >
+                {details.val} SOL
+              </p>
+              <BiDownArrowAlt
+                style={{ padding: '10px 0' }}
+                fontSize='28px'
+                color='#555454'
+              />
+              <div>
+                <p
+                  style={{
+                    margin: '0',
+                    color: 'white',
+                    textAlign: 'center',
+                    wordBreak: 'break-all',
+                    padding: '0 25px',
+                  }}
+                >
+                  {details.to}
+                </p>
+              </div>
+            </Flex>
+
+            <Flex direction='column' align='center' margin='20px 0'>
+              <Flex
+                direction='row'
+                width='95%'
+                align='center'
+                border='1px solid #333333'
+                margin='10px'
+                padding='0'
+                justify='space-between'
+                radius='5px'
+              >
+                <p style={{ color: 'white', padding: '0 6px' }}>Network Fee</p>
+                <p style={{ color: 'white', padding: '0 6px' }}>{gas} LAM</p>
+              </Flex>
+              <Flex>
+                <Button
+                  background='#333333'
+                  border='none'
+                  margin='10px 5px'
+                  radius='7px'
+                  color='white'
+                  padding='15px 30px'
+                  width='158px'
+                  weight='bold'
+                  hoverColor='#444444'
+                  onClick={() => navigate('/send', { replace: true })}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  background='#333333'
+                  border='none'
+                  margin='10px 5px'
+                  radius='7px'
+                  color='white'
+                  padding='15px 30px'
+                  width='158px'
+                  weight='bold'
+                  hoverColor='#444444'
+                  onClick={handleSubmit}
+                >
+                  Send
+                </Button>
+              </Flex>
+            </Flex>
+          </Flex>
+        ) : (
+          <div
             style={{
-              margin: '0',
-              padding: '0',
-              fontSize: '35px',
-              color: 'white',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              direction: 'column',
             }}
           >
-            {details.val} SOL
-          </p>
-          <BiDownArrowAlt
-            style={{ padding: '10px 0' }}
-            fontSize='28px'
-            color='#555454'
-          />
-          <div>
-            <p
-              style={{
-                margin: '0',
-                color: 'white',
-                textAlign: 'center',
-                wordBreak: 'break-all',
-                padding: '0 25px',
-              }}
-            >
-              {details.to}
+            <p style={{ color: 'white', fontSize: '20px' }}>
+              Transaction Completed!
             </p>
           </div>
-        </Flex>
-        <Flex direction='column' align='center' margin='20px 0'>
-          <Flex
-            direction='row'
-            width='95%'
-            align='center'
-            border='1px solid #333333'
-            margin='10px'
-            padding='0'
-            justify='space-between'
-            radius='5px'
-          >
-            <p style={{ color: 'white', padding: '0 6px' }}>Network Fee</p>
-            <p style={{ color: 'white', padding: '0 6px' }}>{gas} LAM</p>
-          </Flex>
-          <Flex>
-            <Button
-              background='#333333'
-              border='none'
-              margin='10px 5px'
-              radius='7px'
-              color='white'
-              padding='15px 30px'
-              width='158px'
-              weight='bold'
-              hoverColor='#444444'
-              onClick={() => navigate('/send', { replace: true })}
-            >
-              Cancel
-            </Button>
-            <Button
-              background='#333333'
-              border='none'
-              margin='10px 5px'
-              radius='7px'
-              color='white'
-              padding='15px 30px'
-              width='158px'
-              weight='bold'
-              hoverColor='#444444'
-              onClick={() =>
-                sendTransaction(wallets, connection, details.val, details.to)
-              }
-            >
-              Send
-            </Button>
-          </Flex>
-        </Flex>
-      </Flex>
+        )
+      ) : (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            direction: 'column',
+          }}
+        >
+          <p style={{ color: 'white', fontSize: '20px' }}>
+            Transaction Processing...
+          </p>
+        </div>
+      )}
     </div>
   );
 }
