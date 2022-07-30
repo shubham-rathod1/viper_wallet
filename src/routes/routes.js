@@ -41,4 +41,14 @@ export const openRoutes = [
     exact: false,
     element: lazy(() => import('../components/send/confirm')),
   },
+  {
+    path: '/export',
+    exact: false,
+    element: lazy(() => import('../components/walletMenu/exportWallet')),
+  },
+  {
+    path: '/import',
+    exact: false,
+    element: lazy(() => import('../components/walletMenu/importPrivate')),
+  },
 ];

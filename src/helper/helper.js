@@ -22,8 +22,6 @@ export const ellipsify = (str) => {
 };
 
 export const estimateGas = async (connection, from, to, amount) => {
-  const payer = web3.Keypair.generate();
-  const payee = web3.Keypair.generate();
   console.log(connection, from, to, amount);
   const recentBlockhash = await connection.getLatestBlockhash();
   const lamports = amount * web3.LAMPORTS_PER_SOL;
@@ -77,9 +75,7 @@ export const sendTransaction = async (wallets, connection, val, to) => {
   var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
   const ary = Object.values(decryptedData);
-  console.log('my ary', ary);
   const sec = new Uint8Array(ary);
-  console.log('my sec', sec);
 
   const kpair = Keypair.fromSecretKey(Uint8Array.from(sec));
   console.log('kpair', kpair);

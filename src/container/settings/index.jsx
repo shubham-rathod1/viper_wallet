@@ -100,6 +100,7 @@ export default function Settings() {
             weight='bold'
             size='16px'
             margin='5px 0'
+            onClick={ i === 0 ? () => navigate('/export', { replace: true }) : null}
           >
             {item}
           </Button>

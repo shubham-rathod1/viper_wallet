@@ -12,6 +12,7 @@ const Para = styled.p`
   margin: 0px;
   padding: 2px 0;
   text-align: left;
+  color: ${(props) => props.color || null};
   font-weight: ${(props) => props.weight || null};
 `;
 
@@ -64,25 +65,28 @@ export default function WalletMenu() {
 
   const importWallet = async () => {
     console.log('imported');
+    navigate('/import', { replace: true });
   };
 
   return (
-    <div style={{ height: '420px' }}>
+    <div style={{ height: '480px', backgroundColor: '#262626' }}>
       <Flex justify='center' padding='15px 0'>
-        <h2 style={{ margin: '0', padding: '0' }}>Add / Connection Wallet</h2>
+        <h2 style={{ margin: '0', padding: '0', color: 'white' }}>
+          Add / Connection Wallet
+        </h2>
       </Flex>
-      <Flex direction='column' justify='space-between' height='100%'>
+      <Flex direction='column' justify='space-between' margin='30px 0'>
         <Flex direction='column'>
           {array.map((item, i) => (
             <Flex
               key={i}
               direction='row'
               align='center'
-              padding='10px'
-              border='1px solid red'
+              padding='18px 0'
               radius='7px'
-              margin='10px'
+              margin='10px 10px'
               cursor='pointer'
+              backgroundColor='#333333'
               onClick={item.type === 'create' ? createWallet : importWallet}
             >
               <Flex
@@ -91,18 +95,20 @@ export default function WalletMenu() {
                 wrap='wrap'
                 justify='center'
               >
-                <Para weight='bold'>{item.title}</Para>
-                <Para>{`${item.description}`}</Para>
+                <Para color='white' weight='bold'>
+                  {item.title}
+                </Para>
+                <Para color='#6b6a6a'>{`${item.description}`}</Para>
               </Flex>
             </Flex>
           ))}
         </Flex>
-        <Flex justify='center' bottom='0px'>
+        <Flex justify='center' margin="120px 0 0 0">
           <Button
             width='94%'
             padding='13px'
             radius='5px'
-            background='teal'
+            background='#333333'
             color='white'
             weight='bold'
             size='16px'
